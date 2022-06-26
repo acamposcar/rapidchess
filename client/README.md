@@ -1,2 +1,3 @@
-# chat-app
-A chat app made using Express, WebSockets and React
+# Chess
+A multiplayer chess game made using Express, WebSockets and React
+
