@@ -1,0 +1,25 @@
+GET http://localhost:5000/api/v1/games/ HTTP/1.1
+
+###
+GET http://localhost:5000/api/v1/games/62973ac074e38a899eb70361 HTTP/1.1
+
+
+###
+POST http://localhost:5000/api/v1/games/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Mjk1Zjg0ZTVkYTVmNDg0MDJiMWZmMjciLCJ1c2VybmFtZSI6ImFjYW1wb3MiLCJpYXQiOjE2NTQwMDc3NjUsImV4cCI6MTY1NDE4MDU2NX0.ps5X711r8K4AkYkS3ktrgMwCUZTC-jv0TRv13ZdmmcM
+
+{
+
+}
+
+
+###
+POST http://localhost:5000/api/v1/games/627a46d7896ef995934bf783/comments HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MjczYzYxMjNhNTJmMGM3M2IzY2VjNTEiLCJ1c2VybmFtZSI6ImFjYW1wb3MxMSIsImlhdCI6MTY1MjE3OTU1OSwiZXhwIjoxNjUyMjY1OTU5fQ.xvarW3L-vPD_BqfzDzAgy304_VJulSS8Axf3Qq-7h7Y
+
+{
+    "content": "This is a comment"
+}
+

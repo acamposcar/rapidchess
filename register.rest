@@ -1,0 +1,26 @@
+
+
+###
+POST http://localhost:5000/api/v1/users/register/ HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Alejandro Campos",
+    "username": "acampos",
+    "password": "nemesis",
+    "admin": false
+}
+
+###
+
+GET http://localhost:5000/api/users/ HTTP/1.1
+
+
+###
+POST http://localhost:5000/api/v1/users/login/ HTTP/1.1
+content-type: application/json
+
+{
+    "username": "acampos",
+    "password": "nemesis"
+}
