@@ -1,10 +1,10 @@
-import { ColorModeScript, ChakraProvider, theme } from '@chakra-ui/react'
+import { ColorModeScript, ChakraProvider } from '@chakra-ui/react'
 import React, { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import App from './App'
-import { AuthContextProvider } from './store/auth-context'
+import { AuthContextProvider } from './contexts/authContext'
 import { BrowserRouter } from 'react-router-dom'
-
+import theme from './theme'
 const container = document.getElementById('root')
 const root = ReactDOM.createRoot(container)
 
@@ -13,12 +13,10 @@ root.render(
     <AuthContextProvider>
       <ColorModeScript />
       <BrowserRouter>
-
-        <ChakraProvider theme={theme}>
+        <ChakraProvider theme={theme} resetCSS>
           <App />
         </ChakraProvider>
       </BrowserRouter>
-
     </AuthContextProvider>
   </StrictMode>
 )

@@ -4,13 +4,13 @@ import { Chessboard } from 'react-chessboard'
 import io from 'socket.io-client'
 import { Container } from '@chakra-ui/react'
 import { useParams } from 'react-router-dom'
-import AuthContext from '../store/auth-context'
-import Waiting from '../components/Waiting'
+import Waiting from './Waiting'
+import useAuth from '../contexts/authContext'
 
 let socket
-const GameBoard = ({ boardWidth }) => {
+const Example = ({ boardWidth }) => {
   const chessboardRef = useRef()
-  const authCtx = useContext(AuthContext)
+  const authCtx = useAuth()
 
   const [game, setGame] = useState(new Chess())
   const [fen, setFen] = useState('')
@@ -288,4 +288,4 @@ const GameBoard = ({ boardWidth }) => {
   )
 }
 
-export default GameBoard
+export default Example

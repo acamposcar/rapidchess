@@ -4,27 +4,22 @@ const socketApi = {}
 
 socketApi.io = io
 
-let interval
-
 io.on('connection', (socket) => {
-  console.log('New client connected')
-  if (interval) {
-    clearInterval(interval)
-  }
-  socket.on('move', (movement) => {
-    socket.broadcast.emit('move', movement)
+  console.log('connected with id', socket.id)
+  const gameId = socket.handshake.query.gameId
+  socket.join(gameId)
+  console.log('room', gameId)
+
+  socket.on('join-room', (recipientId) => {
+    socket.join(recipientId)
   })
-  interval = setInterval(() => getApiAndEmit(socket), 1000)
-  socket.on('disconnect', () => {
-    console.log('Client disconnected')
-    clearInterval(interval)
+
+  socket.on('move', (gameId, fen) => {
+    io.to(gameId).emit('invalidate-query', fen)
+  })
+  socket.on('join-game', (gameId) => {
+    io.to(gameId).emit('game-start')
   })
 })
-
-const getApiAndEmit = socket => {
-  const response = new Date()
-  // Emitting a new message. Will be consumed by the client
-  socket.emit('FromAPI', response)
-}
 
 module.exports = socketApi

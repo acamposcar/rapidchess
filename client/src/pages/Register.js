@@ -1,14 +1,14 @@
 import React, { useRef, useContext } from 'react'
-import AuthContext from '../store/auth-context'
 import useFetch from '../hooks/useFetch'
 import { Heading, VStack, Button, Center, FormControl, FormLabel, Input, Container } from '@chakra-ui/react'
 import AlertError from '../components/AlertError'
 import { UnlockIcon } from '@chakra-ui/icons'
+import useAuth from '../contexts/authContext'
 const Register = () => {
   const usernameRef = useRef()
   const passwordRef = useRef()
   const nameRef = useRef()
-  const authCtx = useContext(AuthContext)
+  const authCtx = useAuth()
   const { loading, sendRequest, error } = useFetch()
 
   const submitHandler = async (event) => {

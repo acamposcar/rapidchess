@@ -1,40 +1,28 @@
 import React from 'react'
-import { Box, Slider, SliderMark, SliderTrack, SliderFilledTrack, SliderThumb } from '@chakra-ui/react'
+import { Box, Slider, SliderMark, SliderTrack, SliderFilledTrack, SliderThumb, Flex } from '@chakra-ui/react'
 
-const TimeSlider = (props) => {
-  const labelStyles = {
-    mt: '2',
-    ml: '-2.5',
-    fontSize: 'sm'
-  }
-
+const TimeSlider = ({ sliderValue, onTimeChange }) => {
   return (
     <Box pt={6} pb={2}>
-      <Slider aria-label='Minutes per player' onChange={(value) => props.onTimeChange(value)}>
-        <SliderMark value={25} {...labelStyles}>
-          25 min
-        </SliderMark>
-        <SliderMark value={50} {...labelStyles}>
-          50 min
-        </SliderMark>
-        <SliderMark value={75} {...labelStyles}>
-          75 min
-        </SliderMark>
+      <Slider aria-label='Minutes per player' value={sliderValue} onChange={(value) => onTimeChange(value)} min={1}>
         <SliderMark
-          value={props.sliderValue}
+          value={sliderValue}
           textAlign='center'
-          bg='blue.500'
-          color='white'
+          color='black'
           mt='-10'
           ml='-5'
           w='12'
+          fontSize={17}
         >
-          {props.sliderValue}
+          <Flex gap={1} >
+            <Box>{sliderValue}</Box>
+            <Box>min</Box>
+          </Flex>
         </SliderMark>
-        <SliderTrack>
-          <SliderFilledTrack />
+        <SliderTrack height={3} borderRadius={10} >
+          <SliderFilledTrack bg='bgDark' />
         </SliderTrack>
-        <SliderThumb />
+        <SliderThumb boxSize={6} borderColor='bgDark' />
       </Slider>
     </Box>
   )

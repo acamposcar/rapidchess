@@ -4,16 +4,22 @@ const { Schema } = mongoose
 
 const GameSchema = new Schema(
   {
-    creator: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    white: { type: Schema.Types.ObjectId, ref: 'User' },
-    black: { type: Schema.Types.ObjectId, ref: 'User' },
+    creator: { type: String },
+    white: { type: String },
+    black: { type: String },
     pgn: { type: String },
     fen: { type: String },
-    winner: { type: Schema.Types.ObjectId, ref: 'User' },
+    winner: { type: String },
+    lastMoveFrom: { type: String },
+    lastMoveTo: { type: String },
     startDate: { type: Date },
+    lastMoveDate: { type: Date },
+    whiteTime: { type: Number },
+    blackTime: { type: Number },
     active: { type: Boolean, default: true },
-    time: { type: Number, default: 60 }
-  }
+    duration: { type: Number, default: 60 },
+    colorMode: { type: String }
+  }, { timestamps: true }
 )
 
 // Export model

@@ -1,40 +1,50 @@
-import React, { useContext } from 'react'
-import {
-  Box
-} from '@chakra-ui/react'
-import GameBoard from './pages/GameBoard'
+import React from 'react'
+import { Box } from '@chakra-ui/react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
-import AuthContext from './store/auth-context'
 import Header from './components/Header'
 import Register from './pages/Register'
 import Home from './pages/Home'
+import Game from './pages/Game'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { QueryClient, QueryClientProvider, QueryCache } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
+import useAuth from './contexts/authContext'
+import Layout from './components/Layout'
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1
+    }
+  },
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      // show error for background refetches
+      if (query.state.data !== undefined) {
+        toast.error(`Something went wrong: ${error.message}`)
+      }
+    }
+  })
+})
 
 const App = () => {
-  const authCtx = useContext(AuthContext)
   return (
-
-    <Box textAlign='center' fontSize='xl'>
-      <Header />
+    <QueryClientProvider client={queryClient}>
+      <ToastContainer />
       <Routes>
-        {!authCtx.isLoggedIn && (
-          <>
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='*' element={<Navigate to='/login' replace />} />
-          </>
-        )}
-        {authCtx.isLoggedIn && (
-          <>
-            <Route path='/login' element={<Navigate to='/' replace />} />
-            <Route path='/register' element={<Navigate to='/' replace />} />
-            <Route path='/logout' element={<Navigate to='/' replace />} />
-            <Route path='/' element={<Home />} />
-            <Route path='/games/:gameId' element={<GameBoard boardWidth='500' />} />
-          </>
-        )}
+        <Route
+          path='/' element={
+            <Layout />
+          }
+        >
+          <Route index element={<Home />} />
+          <Route path='/games/:gameId' element={<Game />} />
+        </Route>
       </Routes>
-    </Box>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider >
+
   )
 }
 

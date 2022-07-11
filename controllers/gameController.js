@@ -9,7 +9,7 @@ exports.getGame = async (req, res, next) => {
         error: 'No game found'
       })
     }
-    return res.status(200).json({ game })
+    return res.status(200).json(game)
   } catch (err) {
     return next(err)
   }
@@ -36,10 +36,11 @@ exports.createGame = async (req, res, next) => {
 
   try {
     const game = await new Game({
-      creator: req.user._id,
+      creator: req.body.token,
       fen: chess.fen(),
-      time: req.body.time,
-      [color]: req.user._id
+      duration: req.body.duration,
+      [color]: req.body.token,
+      colorMode: req.body.color
     }).save()
     return res.status(200).json({
       game
@@ -49,33 +50,103 @@ exports.createGame = async (req, res, next) => {
   }
 }
 
+// exports.updateGame = async (req, res, next) => {
+//   const chess = new Chess()
+//   chess.load(req.body.prevFen)
+
+//   const move = chess.move({
+//     from: req.body.from,
+//     to: req.body.to,
+//     promotion: 'q' // always promote to a queen for example simplicity
+//   })
+
+//   if (move === null) return res.status(200).json({ valid: false })
+
+//   const game = {
+//     fen: chess.fen()
+//   }
+
+//   try {
+//     const updatedGame = await Game.findByIdAndUpdate(req.params.gameId, game, { new: true })
+//     if (!updatedGame) {
+//       return res.status(404).json({
+//         error: 'No game found'
+//       })
+//     }
+//     return res.status(200).json({
+//       valid: true
+//     })
+//   } catch (err) {
+//     return next(err)
+//   }
+// }
+
 exports.updateGame = async (req, res, next) => {
-  const chess = new Chess()
-  chess.load(req.body.prevFen)
+  const fen = req.body.fen
+  const lastMoveFrom = req.body.lastMoveFrom
+  const lastMoveTo = req.body.lastMoveTo
 
-  const move = chess.move({
-    from: req.body.from,
-    to: req.body.to,
-    promotion: 'q' // always promote to a queen for example simplicity
-  })
-
-  if (move === null) return res.status(200).json({ valid: false })
-
-  const game = {
-    fen: chess.fen()
+  if (!fen || !lastMoveFrom || !lastMoveTo) {
+    return res.status(400).json({
+      error: 'Missing parameters'
+    })
+  }
+  const update = {
+    lastMoveFrom,
+    lastMoveTo,
+    fen
   }
 
   try {
-    const updatedGame = await Game.findByIdAndUpdate(req.params.gameId, game, { new: true })
+    const updatedGame = await Game.findByIdAndUpdate(req.params.gameId, update, { new: true })
+
     if (!updatedGame) {
       return res.status(404).json({
         error: 'No game found'
       })
     }
-    return res.status(200).json({
-      valid: true
-    })
+
+    return res.status(200).json(updatedGame)
   } catch (err) {
     return next(err)
   }
 }
+
+
+exports.joinGame = async (req, res, next) => {
+  const userId = req.body.user
+  const gameId = req.params.gameId
+  if (!userId) {
+    return res.status(400).json({
+      error: 'Missing userId'
+    })
+  }
+
+  try {
+    const game = await Game.findById(gameId)
+    let newPlayerColor
+    if (game.white && game.black) {
+      return res.status(400).json({
+        error: "Can't join the game"
+      })
+    } else if (game.white) {
+      newPlayerColor = 'black'
+    } else {
+      newPlayerColor = 'white'
+    }
+    const updatedGame = await Game.findByIdAndUpdate(gameId, { [newPlayerColor]: userId }, { new: true })
+
+    if (!updatedGame) {
+      return res.status(404).json({
+        error: 'No game found'
+      })
+    }
+
+    return res.status(200).json(updatedGame)
+  } catch (err) {
+    return next(err)
+  }
+}
+
+
+
