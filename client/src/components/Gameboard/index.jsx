@@ -2,15 +2,17 @@ import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { Chess } from 'chess.js'
 import { toast } from 'react-toastify'
 import { Chessboard } from 'react-chessboard'
-import { updateGame } from '../services/api'
+import { updateGame } from '../../services/api'
 import { useMutation, useQueryClient } from 'react-query'
-import { useSocket } from '../contexts/socketContext'
-import { Center } from '@chakra-ui/react'
-
+import { useSocket } from '../../contexts/socketContext'
+import { Center, Flex, Box, Text, VStack } from '@chakra-ui/react'
+import Timer from './Timer'
+import Result from './Result'
+import useAuth from '../../contexts/authContext'
 export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   const chessboardRef = useRef()
   const socket = useSocket()
-
+  const authCtx = useAuth()
   const [game, setGame] = useState(new Chess(savedGame.fen))
 
   const [rightClickedSquares, setRightClickedSquares] = useState({})
@@ -19,8 +21,25 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   const [kingCheckSquare, setKingCheckSquare] = useState({})
 
   const queryClient = useQueryClient()
-
+  const opponentColor = playerColor === 'white' ? 'black' : 'white'
   const isOwnTurn = game.turn() === playerColor.slice(0, 1)
+
+  let remainingPlayerTime
+  let remainingOpponentTime
+  const MS_TO_SEC = 1000
+  const MIN_TO_SEC = 60
+  if (playerColor === 'white') {
+    remainingPlayerTime = (savedGame.duration * MIN_TO_SEC - savedGame.whiteTime / MS_TO_SEC)
+    remainingOpponentTime = (savedGame.duration * MIN_TO_SEC - savedGame.blackTime / MS_TO_SEC)
+  } else {
+    remainingPlayerTime = (savedGame.duration * MIN_TO_SEC - savedGame.blackTime / MS_TO_SEC)
+    remainingOpponentTime = (savedGame.duration * MIN_TO_SEC - savedGame.whiteTime / MS_TO_SEC)
+  }
+  let isGameOver = false
+
+  if (game.game_over() || remainingPlayerTime <= 0 || remainingOpponentTime <= 0) {
+    isGameOver = true
+  }
 
   const { mutate } = useMutation(updateGame, {
     // When mutate is called:
@@ -95,8 +114,8 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
 
   useEffect(() => {
     setMoveSquares({
-      [savedGame.lastMoveFrom]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' },
-      [savedGame.lastMoveTo]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' }
+      [savedGame.lastMoveFrom]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
+      [savedGame.lastMoveTo]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' }
     })
     kingInCheck()
   }, [savedGame, kingInCheck])
@@ -134,6 +153,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
 
   function onDrop (sourceSquare, targetSquare) {
     if (!isOwnTurn) return
+    if (isGameOver) return
     const gameCopy = { ...game }
     const move = gameCopy.move({
       from: sourceSquare,
@@ -144,11 +164,11 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
     // illegal move
     if (move === null) return false
 
-    mutate({ gameId: savedGame._id, fen: gameCopy.fen(), lastMoveFrom: sourceSquare, lastMoveTo: targetSquare })
+    mutate({ gameId: savedGame._id, fen: gameCopy.fen(), lastMoveFrom: sourceSquare, lastMoveTo: targetSquare, userId: authCtx.token })
     kingInCheck()
     setMoveSquares({
-      [sourceSquare]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' },
-      [targetSquare]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' }
+      [sourceSquare]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
+      [targetSquare]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' }
     })
     return true
   }
@@ -163,6 +183,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   }
 
   function getMoveOptions (square) {
+    if (isGameOver) return
     if (!isOwnTurn) return
 
     const moves = game.moves({
@@ -204,41 +225,60 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
           : { backgroundColor: color }
     })
   }
+
   return (
     <Center>
-      <Chessboard
-        id="SquareStyles"
-        arePremovesAllowed={false}
-        boardOrientation={playerColor}
-        animationDuration={200}
-        boardWidth={boardWidth}
-        position={savedGame.fen}
-        onMouseOverSquare={onMouseOverSquare}
-        onMouseOutSquare={onMouseOutSquare}
-        onSquareClick={onSquareClick}
-        onSquareRightClick={onSquareRightClick}
-        onPieceDrop={onDrop}
-        customBoardStyle={{
-          borderRadius: '4px',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
-        }}
-        customDarkSquareStyle={{ backgroundColor: '#835836' }}
-        customLightSquareStyle={{ backgroundColor: '#c2a06e' }}
-        customSquareStyles={{
-          ...moveSquares,
-          ...optionSquares,
-          ...rightClickedSquares,
-          ...kingCheckSquare
-        }}
-        ref={chessboardRef}
-      />
-      {game.game_over() && <p>Game Over!</p>}
-      {game.game_over() && <p>{game.turn() === 'w' ? 'Black Wins' : 'White Wins'}</p>}
-      {game.in_checkmate() && <p>Check Mate!</p>}
-      {game.in_draw() && <p>Draw!</p>}
-      {game.in_stalemate() && <p>Stalemate!</p>}
-      {game.in_threefold_repetition() && <p>Threefold Repetition!</p>}
-      {game.insufficient_material() && <p>Insuficient Material!</p>}
-    </Center>
+      <Flex>
+        <Chessboard
+          id="SquareStyles"
+          arePremovesAllowed={false}
+          boardOrientation={playerColor}
+          animationDuration={200}
+          boardWidth={boardWidth}
+          position={savedGame.fen}
+          onMouseOverSquare={onMouseOverSquare}
+          onMouseOutSquare={onMouseOutSquare}
+          onSquareClick={onSquareClick}
+          onSquareRightClick={onSquareRightClick}
+          onPieceDrop={onDrop}
+          customBoardStyle={{
+            borderRadius: '4px',
+            boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
+          }}
+          customDarkSquareStyle={{ backgroundColor: '#835836' }}
+          customLightSquareStyle={{ backgroundColor: '#c2a06e' }}
+          customSquareStyles={{
+            ...moveSquares,
+            ...optionSquares,
+            ...rightClickedSquares,
+            ...kingCheckSquare
+          }}
+          ref={chessboardRef}
+        />
+
+        <Flex flexDirection='column' justifyContent='center' gap={12} marginLeft={5}>
+          <VStack gap={2} >
+            <Text fontSize={22}>Opponent</Text>
+            <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} />
+          </VStack>
+
+          <Result
+            isGameOver={isGameOver}
+            isDraw={game.in_draw()}
+            isStalemate={game.in_stalemate()}
+            isRepetition={game.in_threefold_repetition()}
+            isInsufficientMaterial={game.insufficient_material()}
+            turn={game.turn()}
+          />
+
+          <VStack gap={2}>
+            <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} />
+            <Text fontSize={22} >You</Text>
+          </VStack>
+
+        </Flex>
+
+      </Flex>
+    </Center >
   )
 }

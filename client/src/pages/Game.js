@@ -1,6 +1,6 @@
 import { Container, Center, Text } from '@chakra-ui/react'
 import React, { useEffect } from 'react'
-import GameBoard from '../components/GameBoard'
+import GameBoard from '../components/Gameboard'
 import { getGame } from '../services/api'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import CustomSpinner from '../components/CustomSpinner'

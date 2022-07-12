@@ -9,13 +9,14 @@ export async function getGame (gameId) {
   return data
 }
 
-export async function updateGame ({ fen, gameId, lastMoveFrom, lastMoveTo }) {
+export async function updateGame ({ fen, gameId, lastMoveFrom, lastMoveTo, userId }) {
   const response = await fetch(`/api/v1/games/${gameId}`, {
     method: 'PUT',
     body: JSON.stringify({
       fen,
       lastMoveFrom,
-      lastMoveTo
+      lastMoveTo,
+      user: userId
     }),
     headers: {
       'Content-Type': 'application/json'
