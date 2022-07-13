@@ -37,7 +37,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   }
   let isGameOver = false
 
-  if (game.game_over() || remainingPlayerTime <= 0 || remainingOpponentTime <= 0) {
+  if (game.game_over() || savedGame.isOver) {
     isGameOver = true
   }
 
@@ -128,20 +128,17 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
         game.load(fen)
       })
     })
+
+    socket.on('time-ended', () => {
+      queryClient.invalidateQueries(['game', savedGame._id])
+    })
+
     socket.on('game-start', () => {
       queryClient.invalidateQueries(['game', savedGame._id])
     })
 
     return () => socket.off('invalidate-query')
   }, [socket, queryClient, savedGame._id])
-
-  const loadFen = () => {
-    safeGameMutate((game) => {
-      game.load(savedGame.fen)
-    })
-    // chessboardRef.current.clearPremoves()
-    // setMoveSquares({})
-  }
 
   function safeGameMutate (modify) {
     setGame((g) => {
@@ -259,7 +256,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
         <Flex flexDirection='column' justifyContent='center' gap={12} marginLeft={5}>
           <VStack gap={2} >
             <Text fontSize={22}>Opponent</Text>
-            <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} />
+            <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
           </VStack>
 
           <Result
@@ -272,7 +269,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
           />
 
           <VStack gap={2}>
-            <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} />
+            <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
             <Text fontSize={22} >You</Text>
           </VStack>
 

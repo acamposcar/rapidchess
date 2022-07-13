@@ -1,6 +1,7 @@
 const socketIO = require('socket.io')
 const io = socketIO()
 const socketApi = {}
+const Game = require('./models/game')
 
 socketApi.io = io
 
@@ -19,6 +20,11 @@ io.on('connection', (socket) => {
   })
   socket.on('join-game', (gameId) => {
     io.to(gameId).emit('game-start')
+  })
+
+  socket.on('time-end', async (gameId) => {
+    await Game.findByIdAndUpdate(gameId, { isOver: true }, {})
+    io.to(gameId).emit('time-ended')
   })
 })
 

@@ -17,6 +17,7 @@ const GameSchema = new Schema(
     whiteTime: { type: Number, default: 0 },
     blackTime: { type: Number, default: 0 },
     active: { type: Boolean, default: true },
+    isOver: { type: Boolean, default: false },
     duration: { type: Number, default: 60 },
     colorMode: { type: String }
   }, { timestamps: true }

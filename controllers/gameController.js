@@ -115,8 +115,7 @@ exports.updateGame = async (req, res, next) => {
 
   try {
     const updatedGame = await Game.findByIdAndUpdate(req.params.gameId, update, { new: true })
-    console.log(updatedGame.blackTime)
-    console.log(updatedGame.whiteTime)
+
     if (!updatedGame) {
       return res.status(404).json({
         error: 'No game found'

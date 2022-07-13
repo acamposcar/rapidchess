@@ -1,10 +1,13 @@
 
 import React, { useEffect, useState } from 'react'
 import { Box } from '@chakra-ui/react'
+import { useSocket } from '../../contexts/socketContext'
 
-const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver }) => {
+const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver, gameId }) => {
   const [timer, setTimer] = useState(timeRemaining)
   const [prevLastMoveDate, setPrevLastMoveDate] = useState()
+  const [endTimeSent, setEndTimeSent] = useState(false)
+  const socket = useSocket()
 
   useEffect(() => {
     if (prevLastMoveDate !== lastMoveDate) {
@@ -41,6 +44,12 @@ const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver }) => {
     return ret
   }
   let bgColor
+
+  if (timer <= 0 && socket != null && !endTimeSent) {
+    socket.emit('time-end', gameId)
+    setEndTimeSent(true)
+  }
+
   if (isGameOver && timer <= 0) {
     bgColor = 'red.700'
   } else if (isTurn && !isGameOver) {
