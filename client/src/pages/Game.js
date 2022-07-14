@@ -25,9 +25,9 @@ const Game = () => {
       // setChessboardSize(display.offsetWidth - 20)
       // if (!display) return
       if (window.outerHeight * 0.8 - 100 > window.outerWidth) {
-        setChessboardSize(window.outerWidth * 0.9)
+        setChessboardSize(window.outerWidth * 0.92)
       } else {
-        setChessboardSize(window.outerHeight * 0.8 - 115)
+        setChessboardSize(window.outerHeight * 0.8 - 130)
       }
     }
 
