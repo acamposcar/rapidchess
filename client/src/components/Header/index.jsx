@@ -8,7 +8,7 @@ const Header = () => {
   const textColor = location.pathname === '/' ? 'black' : 'white'
 
   return (
-    <Flex justifyContent='space-between' alignItems='center' py={10} px={24}>
+    <Flex justifyContent={{ base: 'center', lg: 'space-between' }} alignItems='center' py={5} px={{ base: 8, md: 16, lg: 24 }} background={{ base: 'bgDark', lg: 'transparent' }}>
 
       <NavLink to='/'>
         <Flex alignItems='center'>
@@ -16,11 +16,10 @@ const Header = () => {
           <Text fontFamily='mono' fontSize={24}>rapidchess</Text>
         </Flex>
       </NavLink >
-
-      <Flex as='ul' listStyleType='none' gap={4} justifyContent='space-around' color={textColor} >
+      {/*
+      <Flex as='ul' listStyleType='none' gap={4} justifyContent='space-around' color={{ base: 'white', lg: textColor }} >
         <HeaderLink text='Home' to='/' />
-        <HeaderLink text='History' to='/history' />
-      </Flex>
+      </Flex> */}
     </Flex >
   )
 }

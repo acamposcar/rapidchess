@@ -26,8 +26,8 @@ const JoinGame = ({ savedGame, color, duration }) => {
 
   return (
     <Flex flexDirection='column' alignItems='center'>
-      <Text textTransform='capitalize' fontSize={50} fontWeight={300}>{color}</Text>
-      <Text fontSize={50} fontWeight={700}>{duration} minutes <Box as='span' fontWeight={300}>per player</Box></Text>
+      <Text textTransform='capitalize' fontSize={{ base: 40, md: 50 }} fontWeight={300}>{color}</Text>
+      <Text fontSize={{ base: 40, md: 50 }} lineHeight='1.1' my={2} fontWeight={700}>{duration} minutes <Box as='span' fontWeight={300}>per player</Box></Text>
 
       <Button mt={12} bg='white' color='black' _hover={{ bg: 'whiteAlpha.800' }} isLoading={isLoading} onClick={handleJoinGame}>
         JOIN GAME

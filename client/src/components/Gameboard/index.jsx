@@ -5,7 +5,7 @@ import { Chessboard } from 'react-chessboard'
 import { updateGame } from '../../services/api'
 import { useMutation, useQueryClient } from 'react-query'
 import { useSocket } from '../../contexts/socketContext'
-import { Center, Flex, Box, Text, VStack } from '@chakra-ui/react'
+import { Center, Flex, Box, Text, VStack, Hide, Show } from '@chakra-ui/react'
 import Timer from './Timer'
 import Result from './Result'
 import useAuth from '../../contexts/authContext'
@@ -65,7 +65,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
       toast.error(error.message)
     },
     onSuccess: (savedGame) => {
-      socket.emit('move', savedGame._id, savedGame.fen)
+      // socket.emit('move', savedGame._id, savedGame.fen)
       kingInCheck()
     },
     // Always refetch after error or success:
@@ -117,15 +117,21 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
       [savedGame.lastMoveFrom]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
       [savedGame.lastMoveTo]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' }
     })
+
     kingInCheck()
-  }, [savedGame, kingInCheck])
+  }, [])
 
   useEffect(() => {
     if (socket == null) return
-    socket.on('invalidate-query', (fen) => {
+    socket.on('invalidate-query', (fen, lastMoveFrom, lastMoveTo) => {
       queryClient.invalidateQueries(['game', savedGame._id])
       safeGameMutate((game) => {
         game.load(fen)
+      })
+      kingInCheck()
+      setMoveSquares({
+        [lastMoveFrom]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
+        [lastMoveTo]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' }
       })
     })
 
@@ -137,8 +143,12 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
       queryClient.invalidateQueries(['game', savedGame._id])
     })
 
-    return () => socket.off('invalidate-query')
-  }, [socket, queryClient, savedGame._id])
+    return () => {
+      socket.off('invalidate-query')
+      socket.off('time-ended')
+      socket.off('game-start')
+    }
+  }, [socket, queryClient, savedGame._id, kingInCheck])
 
   function safeGameMutate (modify) {
     setGame((g) => {
@@ -161,7 +171,9 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
     // illegal move
     if (move === null) return false
 
+    socket.emit('move', savedGame._id, gameCopy.fen(), sourceSquare, targetSquare, authCtx.token)
     mutate({ gameId: savedGame._id, fen: gameCopy.fen(), lastMoveFrom: sourceSquare, lastMoveTo: targetSquare, userId: authCtx.token })
+
     kingInCheck()
     setMoveSquares({
       [sourceSquare]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
@@ -225,14 +237,20 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
 
   return (
     <Center>
-      <Flex>
+      <Flex flexDirection={{ base: 'column', lg: 'row' }}>
+        <Hide above='lg'>
+          <Box>
+            <Text fontSize={22}>Opponent</Text>
+            <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
+          </Box>
+        </Hide>
         <Chessboard
           id="SquareStyles"
           arePremovesAllowed={false}
           boardOrientation={playerColor}
           animationDuration={200}
           boardWidth={boardWidth}
-          position={savedGame.fen}
+          position={game.fen()}
           onMouseOverSquare={onMouseOverSquare}
           onMouseOutSquare={onMouseOutSquare}
           onSquareClick={onSquareClick}
@@ -252,29 +270,32 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
           }}
           ref={chessboardRef}
         />
-
-        <Flex flexDirection='column' justifyContent='center' gap={12} marginLeft={5}>
-          <VStack gap={2} >
-            <Text fontSize={22}>Opponent</Text>
-            <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
-          </VStack>
-
-          <Result
-            isGameOver={isGameOver}
-            isDraw={game.in_draw()}
-            isStalemate={game.in_stalemate()}
-            isRepetition={game.in_threefold_repetition()}
-            isInsufficientMaterial={game.insufficient_material()}
-            turn={game.turn()}
-          />
-
-          <VStack gap={2}>
+        <Hide above='lg'>
+          <Box>
             <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
             <Text fontSize={22} >You</Text>
-          </VStack>
-
-        </Flex>
-
+          </Box>
+        </Hide>
+        <Hide below='lg'>
+          <Flex flexDirection='column' justifyContent='center' gap={12} marginLeft={5}>
+            <VStack gap={2} >
+              <Text fontSize={22}>Opponent</Text>
+              <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
+            </VStack>
+            <Result
+              isGameOver={isGameOver}
+              isDraw={game.in_draw()}
+              isStalemate={game.in_stalemate()}
+              isRepetition={game.in_threefold_repetition()}
+              isInsufficientMaterial={game.insufficient_material()}
+              turn={game.turn()}
+            />
+            <VStack gap={2}>
+              <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
+              <Text fontSize={22} >You</Text>
+            </VStack>
+          </Flex>
+        </Hide>
       </Flex>
     </Center >
   )

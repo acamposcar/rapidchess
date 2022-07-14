@@ -54,7 +54,7 @@ const CreateGame = () => {
     }, createGame)
   }
   return (
-    <Box as='form' maxW='350px' textAlign='center'>
+    <Box as='form' maxW='350px' width='100%' textAlign='center' >
       <TimeSlider onTimeChange={timeChangeHandler} sliderValue={duration} />
       <Flex justifyContent='space-around' marginY={7}>
         <ButtonColor color='white' onClick={() => selectColorHandler('white')} selectedColor={selectedColor} >

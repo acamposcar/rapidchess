@@ -8,11 +8,13 @@ const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver, gameId }) => {
   const [prevLastMoveDate, setPrevLastMoveDate] = useState()
   const [endTimeSent, setEndTimeSent] = useState(false)
   const socket = useSocket()
-
+  const [dateNow, setDateNow] = useState(new Date())
   useEffect(() => {
     if (prevLastMoveDate !== lastMoveDate) {
-      if (isTurn || isGameOver) {
-        const dateDif = new Date().getTime() - new Date(lastMoveDate).getTime()
+      if (isTurn && !isGameOver) {
+        console.log(dateNow.getTime())
+
+        const dateDif = dateNow.getTime() - new Date(lastMoveDate).getTime()
         setTimer(timeRemaining - dateDif / 1000)
       }
       setPrevLastMoveDate(lastMoveDate)
@@ -25,7 +27,17 @@ const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver, gameId }) => {
     }, 1000)
 
     return () => clearInterval(timerInterval)
-  }, [isTurn, timeRemaining, lastMoveDate, prevLastMoveDate, isGameOver])
+  }, [isTurn, timeRemaining, lastMoveDate, prevLastMoveDate, isGameOver, dateNow])
+
+  useEffect(() => {
+    if (socket == null) return
+    socket.on('time', (dateNow) => {
+      setDateNow(new Date(dateNow))
+    })
+    return () => {
+      socket.off('time')
+    }
+  }, [])
 
   function format (time) {
     // Hours, minutes and seconds
@@ -43,6 +55,7 @@ const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver, gameId }) => {
     if (time <= 0) return '00:00'
     return ret
   }
+
   let bgColor
 
   if (timer <= 0 && socket != null && !endTimeSent) {

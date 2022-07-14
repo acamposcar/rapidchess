@@ -3,7 +3,6 @@ import React from 'react'
 import { Box, Text } from '@chakra-ui/react'
 
 const Result = ({ isGameOver, isDraw, isStalemate, isRepetition, isInsufficientMaterial, turn }) => {
-  console.log(isGameOver, turn, isDraw)
   return (
     <Box fontSize={20} minHeight='50px'>
 

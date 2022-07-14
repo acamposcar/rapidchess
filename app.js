@@ -29,11 +29,15 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'client/build')))
 
 app.use('/api/v1', indexRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/games', gamesRouter)
+
+app.use('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
+})
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
