@@ -5,11 +5,10 @@ const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
-const passport = require('passport')
 const connectDB = require('./config/db')
-
+const compression = require('compression')
+const helmet = require("helmet");
 const indexRouter = require('./routes/index')
-const usersRouter = require('./routes/users')
 const gamesRouter = require('./routes/games')
 
 const app = express()
@@ -17,9 +16,8 @@ const app = express()
 // Connect to database
 connectDB()
 
-// Passport configuration
-require('./config/passport')
-app.use(passport.initialize())
+app.use(helmet())
+app.use(compression())
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -32,7 +30,6 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'client/build')))
 
 app.use('/api/v1', indexRouter)
-app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/games', gamesRouter)
 
 app.use('/*', (req, res) => {
