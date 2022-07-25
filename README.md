@@ -17,7 +17,7 @@ A real-time multiplayer chess app built with MERN Stack (MongoDB, ExpressJS, Rea
 ## Features
 
 - No registration needed
-- Real-time using web sockets
+- Real-time multiplayer using web sockets
 - Select game duration
 - Select player color
 
