@@ -2,7 +2,6 @@ const socketIO = require('socket.io')
 const io = socketIO()
 const socketApi = {}
 const Game = require('./models/game')
-const gameController = require('./controllers/gameControllerSocket')
 
 socketApi.io = io
 const MS_TO_SEC = 1000
