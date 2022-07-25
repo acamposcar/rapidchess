@@ -14,7 +14,6 @@ io.on('connection', (socket) => {
 
   const gameId = socket.handshake.query.gameId
   socket.join(gameId)
-  console.log('room', gameId)
 
   socket.on('join-room', (recipientId) => {
     socket.join(recipientId)

@@ -44,7 +44,6 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   const { mutate } = useMutation(updateGame, {
     // When mutate is called:
     onMutate: async updatedGame => {
-      console.log(updatedGame)
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries(['game', savedGame._id])
 
@@ -113,11 +112,8 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   useEffect(() => {
     if (socket == null) return
     socket.on('invalidate-query', (fen, lastMoveFrom, lastMoveTo) => {
-      console.log('hola')
-
       setTimeout(() => {
         // Timeout to wait DB to update after socket emit
-        console.log('hola')
         queryClient.invalidateQueries(['game', savedGame._id])
       }, 500)
       safeGameMutate((game) => {
