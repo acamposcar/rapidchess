@@ -28,7 +28,7 @@ const WaitingRoom = ({ duration, gameId, color }) => {
   return (
     <Flex flexDirection='column' alignItems='center' textAlign='center'>
       <Text textTransform='capitalize' fontSize={{ base: 40, md: 50 }} fontWeight={300}>{color}</Text>
-      <Text fontSize={{ base: 40, md: 50 }} lineHeight='1.1' my={2} fontWeight={700}>{duration} minutes <Box as='span' fontWeight={300}>per player</Box></Text>
+      <Text fontSize={{ base: 40, md: 50 }} lineHeight='1.1' my={2} fontWeight={700}>{duration} {duration > 1 ? 'minutes' : 'minute'}<Box as='span' fontWeight={300}> per player</Box></Text>
       <Text marginTop={12}>To invite someone to play, share this link:</Text>
       <Flex gap={2} width='100%' justifyContent='center' my={1}>
         <Input textAlign='center' readOnly value={url} autoFocus maxWidth='450px' fontFamily='mono' bg='whiteAlpha.400' border='none' />

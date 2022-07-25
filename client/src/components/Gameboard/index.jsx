@@ -23,6 +23,8 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   const queryClient = useQueryClient()
   const opponentColor = playerColor === 'white' ? 'black' : 'white'
   const isOwnTurn = game.turn() === playerColor.slice(0, 1)
+  // Check if server has updated the last move to show the correct time
+  const isOwnTurnServer = savedGame.turn === playerColor.slice(0, 1)
 
   let remainingPlayerTime
   let remainingOpponentTime
@@ -40,7 +42,6 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   if (game.game_over() || savedGame.isOver) {
     isGameOver = true
   }
-
   const { mutate } = useMutation(updateGame, {
     // When mutate is called:
     onMutate: async updatedGame => {
@@ -124,7 +125,13 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   useEffect(() => {
     if (socket == null) return
     socket.on('invalidate-query', (fen, lastMoveFrom, lastMoveTo) => {
-      queryClient.invalidateQueries(['game', savedGame._id])
+      console.log('hola')
+
+      setTimeout(() => {
+        // Timeout to wait DB to update after socket emit
+        console.log('hola')
+        queryClient.invalidateQueries(['game', savedGame._id])
+      }, 500)
       safeGameMutate((game) => {
         game.load(fen)
       })
@@ -238,10 +245,22 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   return (
     <Center>
       <Flex flexDirection={{ base: 'column', lg: 'row' }}>
+
         <Hide above='lg'>
           <Box>
+            {isGameOver &&
+              <Flex bgColor='blue.700' justifyContent='center' mb={5}>
+                <Result
+                  isGameOver={isGameOver}
+                  isDraw={game.in_draw()}
+                  isStalemate={game.in_stalemate()}
+                  isRepetition={game.in_threefold_repetition()}
+                  isInsufficientMaterial={game.insufficient_material()}
+                  turn={game.turn()}
+                />
+              </Flex>}
             <Text fontSize={22}>Opponent</Text>
-            <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
+            <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurnServer} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
           </Box>
         </Hide>
         <Chessboard
@@ -272,7 +291,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
         />
         <Hide above='lg'>
           <Box>
-            <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
+            <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurnServer} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
             <Text fontSize={22} >You</Text>
           </Box>
         </Hide>
@@ -280,7 +299,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
           <Flex flexDirection='column' justifyContent='center' gap={12} marginLeft={5}>
             <VStack gap={2} >
               <Text fontSize={22}>Opponent</Text>
-              <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
+              <Timer timeRemaining={remainingOpponentTime} isTurn={!isOwnTurnServer} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
             </VStack>
             <Result
               isGameOver={isGameOver}
@@ -291,11 +310,12 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
               turn={game.turn()}
             />
             <VStack gap={2}>
-              <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurn} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
+              <Timer timeRemaining={remainingPlayerTime} isTurn={isOwnTurnServer} lastMoveDate={savedGame.lastMoveDate} isGameOver={isGameOver} gameId={savedGame._id} />
               <Text fontSize={22} >You</Text>
             </VStack>
           </Flex>
         </Hide>
+
       </Flex>
     </Center >
   )

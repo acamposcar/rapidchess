@@ -9,6 +9,7 @@ const GameSchema = new Schema(
     black: { type: String },
     pgn: { type: String },
     fen: { type: String },
+    turn: { type: String, default: 'w' },
     winner: { type: String },
     lastMoveFrom: { type: String },
     lastMoveTo: { type: String },

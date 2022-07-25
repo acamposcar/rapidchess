@@ -1,10 +1,10 @@
 
 import React from 'react'
-import { Box, Text } from '@chakra-ui/react'
+import { Flex, Box, Text } from '@chakra-ui/react'
 
 const Result = ({ isGameOver, isDraw, isStalemate, isRepetition, isInsufficientMaterial, turn }) => {
   return (
-    <Box fontSize={20} minHeight='50px'>
+    <Flex fontSize={20} minHeight='50px' alignItems='center'>
 
       {isGameOver && !isDraw && turn === 'w' &&
         <Text>
@@ -22,7 +22,7 @@ const Result = ({ isGameOver, isDraw, isStalemate, isRepetition, isInsufficientM
       {isStalemate && <Text fontWeight='bold'>Stalemate</Text>}
       {isRepetition && <Text fontWeight='bold'>Threefold Repetition</Text>}
       {isInsufficientMaterial && <Text fontWeight='bold'>Insufficient Material</Text>}
-    </Box>
+    </Flex>
   )
 }
 

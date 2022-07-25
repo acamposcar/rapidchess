@@ -109,8 +109,10 @@ exports.updateGame = async (req, res, next) => {
 
   if (user === game.white) {
     update.whiteTime = new Date(now - lastMoveDate + game.whiteTime)
+    update.turn = 'b'
   } else {
     update.blackTime = new Date(now - lastMoveDate + game.blackTime)
+    update.turn = 'w'
   }
 
   try {

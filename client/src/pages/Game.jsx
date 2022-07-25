@@ -20,10 +20,6 @@ const Game = () => {
 
   useEffect(() => {
     function handleResize () {
-      // const display = document.querySelector('#chessboard')
-      // if (!display) return
-      // setChessboardSize(display.offsetWidth - 20)
-      // if (!display) return
       if (window.outerHeight * 0.8 - 100 > window.outerWidth) {
         setChessboardSize(window.outerWidth * 0.92)
       } else {

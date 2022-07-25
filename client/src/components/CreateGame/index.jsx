@@ -8,7 +8,6 @@ import randomPiece from '../../assets/randomPiece.png'
 import ButtonColor from './ButtonColor'
 import { useNavigate } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
-import AlertError from '../../components/AlertError'
 import useAuth from '../../contexts/authContext'
 
 const CreateGame = () => {

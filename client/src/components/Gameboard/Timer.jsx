@@ -1,46 +1,36 @@
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Box } from '@chakra-ui/react'
 import { useSocket } from '../../contexts/socketContext'
 
 const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver, gameId }) => {
-  const [timer, setTimer] = useState(timeRemaining)
-  const [prevLastMoveDate, setPrevLastMoveDate] = useState()
+  const calculateRemainingTime = useCallback((now) => {
+    if (isTurn && !isGameOver && lastMoveDate) {
+      const dateDif = now.getTime() - new Date(lastMoveDate).getTime()
+      return timeRemaining - dateDif / 1000
+    }
+    return timeRemaining
+  }, [isGameOver, isTurn, lastMoveDate, timeRemaining])
+
+  const [timer, setTimer] = useState(() => calculateRemainingTime(new Date()))
   const [endTimeSent, setEndTimeSent] = useState(false)
   const socket = useSocket()
-  const [dateNow, setDateNow] = useState(new Date())
-  useEffect(() => {
-    if (prevLastMoveDate !== lastMoveDate) {
-      if (isTurn && !isGameOver) {
-        console.log(dateNow.getTime())
-
-        const dateDif = dateNow.getTime() - new Date(lastMoveDate).getTime()
-        setTimer(timeRemaining - dateDif / 1000)
-      }
-      setPrevLastMoveDate(lastMoveDate)
-    }
-
-    const timerInterval = setInterval(() => {
-      if (isTurn && !isGameOver) {
-        setTimer(prev => prev - 1)
-      }
-    }, 1000)
-
-    return () => clearInterval(timerInterval)
-  }, [isTurn, timeRemaining, lastMoveDate, prevLastMoveDate, isGameOver, dateNow])
 
   useEffect(() => {
     if (socket == null) return
-    socket.on('time', (dateNow) => {
-      setDateNow(new Date(dateNow))
+
+    socket.on('time-now', (dateNowServer) => {
+      setTimer(calculateRemainingTime(new Date(dateNowServer)))
     })
     return () => {
-      socket.off('time')
+      socket.off('time-now')
+      socket.off('time-now')
     }
-  }, [])
+  }, [calculateRemainingTime, socket])
 
   function format (time) {
-    // Hours, minutes and seconds
+    // Format time to XX:XX
+
     const hrs = Math.floor(time / 3600)
     const mins = Math.floor((time % 3600) / 60)
     const secs = Math.floor(time % 60)
@@ -56,12 +46,12 @@ const Timer = ({ isTurn, timeRemaining, lastMoveDate, isGameOver, gameId }) => {
     return ret
   }
 
-  let bgColor
-
   if (timer <= 0 && socket != null && !endTimeSent) {
-    socket.emit('time-end', gameId)
+    socket.emit('check-time-end', gameId)
     setEndTimeSent(true)
   }
+
+  let bgColor
 
   if (isGameOver && timer <= 0) {
     bgColor = 'red.700'

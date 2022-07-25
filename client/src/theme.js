@@ -1,10 +1,5 @@
 import { extendTheme } from '@chakra-ui/react'
 
-const activeLabelStyles = {
-  transform: 'scale(0.7) translateY(-8px) translateX(3px) '
-
-}
-
 const theme = extendTheme({
   styles: {
     global: {
@@ -23,11 +18,6 @@ const theme = extendTheme({
   colors: {
     bgDark: '#121212'
   },
-  // fonts: {
-  //   body: 'Roboto, sans-serif',
-  //   heading: 'Roboto, serif',
-  //   mono: 'Menlo, monospace'
-  // },
   components: {
     Button: {
       variants: {
