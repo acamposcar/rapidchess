@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, Box, Heading, Grid, Center, Hide } from '@chakra-ui/react'
-import piecesImg from '../assets/pieces.png'
+import piecesImg from '../assets/pieces.webp'
 import CreateGame from '../components/CreateGame'
 const Home = () => {
   return (
