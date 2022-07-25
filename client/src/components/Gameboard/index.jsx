@@ -5,7 +5,7 @@ import { Chessboard } from 'react-chessboard'
 import { updateGame } from '../../services/api'
 import { useMutation, useQueryClient } from 'react-query'
 import { useSocket } from '../../contexts/socketContext'
-import { Center, Flex, Box, Text, VStack, Hide, Show } from '@chakra-ui/react'
+import { Center, Flex, Box, Text, VStack, Hide } from '@chakra-ui/react'
 import Timer from './Timer'
 import Result from './Result'
 import useAuth from '../../contexts/authContext'
@@ -21,7 +21,6 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   const [kingCheckSquare, setKingCheckSquare] = useState({})
 
   const queryClient = useQueryClient()
-  const opponentColor = playerColor === 'white' ? 'black' : 'white'
   const isOwnTurn = game.turn() === playerColor.slice(0, 1)
   // Check if server has updated the last move to show the correct time
   const isOwnTurnServer = savedGame.turn === playerColor.slice(0, 1)
@@ -74,17 +73,6 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
       queryClient.invalidateQueries(['game', savedGame._id])
     }
   })
-
-  // const { mutate } = useMutation(updateGame, {
-  //   onError: (error) => {
-  //     toast.error(error.message)
-  //   },
-  //   onSuccess: (savedGame) => {
-  //     queryClient.invalidateQueries(['game', savedGame._id])
-  //     socket.emit('move', savedGame._id, savedGame.fen)
-  //     kingInCheck()
-  //   }
-  // })
 
   const getPiecePosition = useCallback((piece) => {
     return [].concat(...game.board()).map((p, index) => {

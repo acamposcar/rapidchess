@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Box, Button, Flex, Image } from '@chakra-ui/react'
 import TimeSlider from '../TimeSlider'
 import whitePiece from '../../assets/whitePiece.png'
@@ -13,7 +13,7 @@ import useAuth from '../../contexts/authContext'
 const CreateGame = () => {
   const [duration, setDuration] = useState(20)
   const [selectedColor, setSelectedColor] = useState('random')
-  const { loading, sendRequest, error } = useFetch()
+  const { loading, sendRequest } = useFetch()
   const navigate = useNavigate()
   const authCtx = useAuth()
 

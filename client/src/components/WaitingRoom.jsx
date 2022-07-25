@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Text, Input, Box, Flex, Button, VStack } from '@chakra-ui/react'
+import { Text, Input, Box, Flex, Button } from '@chakra-ui/react'
 import { toast } from 'react-toastify'
 import { useSocket } from '../contexts/socketContext'
 import { useQueryClient } from 'react-query'
