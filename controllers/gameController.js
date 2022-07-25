@@ -50,37 +50,6 @@ exports.createGame = async (req, res, next) => {
   }
 }
 
-// exports.updateGame = async (req, res, next) => {
-//   const chess = new Chess()
-//   chess.load(req.body.prevFen)
-
-//   const move = chess.move({
-//     from: req.body.from,
-//     to: req.body.to,
-//     promotion: 'q' // always promote to a queen for example simplicity
-//   })
-
-//   if (move === null) return res.status(200).json({ valid: false })
-
-//   const game = {
-//     fen: chess.fen()
-//   }
-
-//   try {
-//     const updatedGame = await Game.findByIdAndUpdate(req.params.gameId, game, { new: true })
-//     if (!updatedGame) {
-//       return res.status(404).json({
-//         error: 'No game found'
-//       })
-//     }
-//     return res.status(200).json({
-//       valid: true
-//     })
-//   } catch (err) {
-//     return next(err)
-//   }
-// }
-
 exports.updateGame = async (req, res, next) => {
   const fen = req.body.fen
   const lastMoveFrom = req.body.lastMoveFrom
