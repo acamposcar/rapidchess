@@ -4,7 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Header from '../Header'
 const Layout = () => {
   const location = useLocation()
-  const bgColorLg = location.pathname === '/' ? 'linear-gradient(90deg, rgba(18,18,18,1) 50%, rgba(255,255,255,1) 50%)' : 'rgba(18, 18, 18, 1)'
+  const bgColorLg = location.pathname === '/' ? 'linear-gradient(90deg, #1C1C1C 50%, rgba(255,255,255,1) 50%)' : '#1C1C1C'
   const bgColorBase = location.pathname === '/' ? 'white' : 'bgDark'
   useLayoutEffect(() => {
     // Scroll to top position on page change
