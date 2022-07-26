@@ -268,8 +268,8 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
             borderRadius: '4px',
             boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
           }}
-          customDarkSquareStyle={{ backgroundColor: '#835836' }}
-          customLightSquareStyle={{ backgroundColor: '#c2a06e' }}
+          customDarkSquareStyle={{ backgroundColor: '#7f8da0' }}
+          customLightSquareStyle={{ backgroundColor: '#e4edff' }}
           customSquareStyles={{
             ...moveSquares,
             ...optionSquares,
