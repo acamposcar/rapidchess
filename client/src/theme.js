@@ -16,7 +16,9 @@ const theme = extendTheme({
     '2xl': '1536px'
   },
   colors: {
-    bgDark: '#121212'
+    bgDark: '#1C1C1C',
+    lightSquare: '#808080',
+    darkSquare: '#1C1C1C'
   },
   components: {
     Button: {
