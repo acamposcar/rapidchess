@@ -31,6 +31,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
 
   const MS_TO_SEC = 1000
   const MIN_TO_SEC = 60
+  const moveSquareColor = 'rgba(0, 255, 0, 0.2)'
 
   if (playerColor === 'white') {
     remainingPlayerTime = (savedGame.duration * MIN_TO_SEC - savedGame.whiteTime / MS_TO_SEC)
@@ -107,8 +108,8 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
 
   useEffect(() => {
     setMoveSquares({
-      [savedGame.lastMoveFrom]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
-      [savedGame.lastMoveTo]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' }
+      [savedGame.lastMoveFrom]: { backgroundColor: moveSquareColor },
+      [savedGame.lastMoveTo]: { backgroundColor: moveSquareColor }
     })
 
     kingInCheck()
@@ -126,8 +127,8 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
       })
       kingInCheck()
       setMoveSquares({
-        [lastMoveFrom]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
-        [lastMoveTo]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' }
+        [lastMoveFrom]: { backgroundColor: moveSquareColor },
+        [lastMoveTo]: { backgroundColor: moveSquareColor }
       })
     })
 
@@ -172,8 +173,8 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
 
     kingInCheck()
     setMoveSquares({
-      [sourceSquare]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' },
-      [targetSquare]: { backgroundColor: 'rgba(0, 255, 0, 0.2)' }
+      [sourceSquare]: { backgroundColor: moveSquareColor },
+      [targetSquare]: { backgroundColor: moveSquareColor }
     })
     return true
   }
