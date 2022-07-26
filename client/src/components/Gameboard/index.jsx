@@ -9,6 +9,7 @@ import { Center, Flex, Box, Text, VStack, Hide } from '@chakra-ui/react'
 import Timer from './Timer'
 import Result from './Result'
 import useAuth from '../../contexts/authContext'
+
 export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
   const chessboardRef = useRef()
   const socket = useSocket()
@@ -27,8 +28,10 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
 
   let remainingPlayerTime
   let remainingOpponentTime
+
   const MS_TO_SEC = 1000
   const MIN_TO_SEC = 60
+
   if (playerColor === 'white') {
     remainingPlayerTime = (savedGame.duration * MIN_TO_SEC - savedGame.whiteTime / MS_TO_SEC)
     remainingOpponentTime = (savedGame.duration * MIN_TO_SEC - savedGame.blackTime / MS_TO_SEC)
@@ -36,11 +39,13 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
     remainingPlayerTime = (savedGame.duration * MIN_TO_SEC - savedGame.blackTime / MS_TO_SEC)
     remainingOpponentTime = (savedGame.duration * MIN_TO_SEC - savedGame.whiteTime / MS_TO_SEC)
   }
+
   let isGameOver = false
 
   if (game.game_over() || savedGame.isOver) {
     isGameOver = true
   }
+
   const { mutate } = useMutation(updateGame, {
     // When mutate is called:
     onMutate: async updatedGame => {
@@ -156,7 +161,7 @@ export default function GameBoard ({ boardWidth, savedGame, playerColor }) {
     const move = gameCopy.move({
       from: sourceSquare,
       to: targetSquare,
-      promotion: 'q' // always promote to a queen for example simplicity
+      promotion: 'q' // always promote to a queen
     })
     setGame(gameCopy)
     // illegal move
