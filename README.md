@@ -7,13 +7,13 @@ A real-time multiplayer chess app built with MERN Stack (MongoDB, ExpressJS, Rea
 
 ## Screenshots
 
-![screenshot-rocks (13)](https://user-images.githubusercontent.com/9263545/180872260-14e7ff09-69aa-457b-8098-59ebcec54199.png)
+![screenshot-rocks (24)](https://user-images.githubusercontent.com/9263545/181110151-c4e5dec3-9564-4cbe-a86c-d579756941f8.png)
 
-![screenshot-rocks (15)](https://user-images.githubusercontent.com/9263545/180873175-bc0dd544-6e5f-4eff-885f-23e47ac3f519.png)
+![screenshot-rocks (22)](https://user-images.githubusercontent.com/9263545/181110192-c13ab223-9ea8-4dd6-9cbb-f1b1fd3a72e4.png)
 
-![screenshot-rocks (14)](https://user-images.githubusercontent.com/9263545/180872975-2e813650-99dc-435f-ae9d-93505545554a.png)
+![screenshot-rocks (23)](https://user-images.githubusercontent.com/9263545/181110175-99f8d196-b8af-4362-81e1-d4943bb74d73.png)
 
-![Frame 20](https://user-images.githubusercontent.com/9263545/180875848-dad2e2cb-0ce8-49c0-849b-5822eff1036b.png)
+![Frame 20 (3)](https://user-images.githubusercontent.com/9263545/181109951-abee51df-7f22-49bd-b761-b537d97af138.png)
 
 https://user-images.githubusercontent.com/9263545/180879498-3651bc5e-826e-44a3-ab97-c475c6e87d17.mp4
 
