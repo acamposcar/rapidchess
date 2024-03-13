@@ -2,8 +2,6 @@
 
 A real-time multiplayer chess app built with MERN Stack (MongoDB, ExpressJS, React & NodeJS) and WebSockets.
 
-👉 [Play online](https://chess-app-production.up.railway.app/)
-
 
 ## Screenshots
 
